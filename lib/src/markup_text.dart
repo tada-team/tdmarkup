@@ -74,8 +74,8 @@ class MarkupText extends StatelessWidget {
 
   List<InlineSpan> _buildMarkupChildren({
     @required BuildContext context,
-    @required MarkupNode parent,
     @required List<MarkupNode> children,
+    MarkupNode parent,
     List<TextDecoration> inheritedDecorations = const [],
     TapGestureRecognizer inheritedRecognizer,
   }) {
@@ -132,27 +132,15 @@ class MarkupText extends StatelessWidget {
       }
 
       switch (node.type) {
+        // unsafe treated as regular text,  no need to escape html in flutter
         case TextType.unsafe:
+        case TextType.plain:
           return _buildTextSpanForCurrentNode(
-            text: node.text, // treated as regular text,  no need to escape html in flutter
+            text: node.text,
           );
 
-        case TextType.plain:
-          if (parent.type == TextType.time) {
-            // temporal time parsing due to the bug with json_serializable's type casts
-            // when adding toJson and fromJson parameters to @JsonKey annotation
-            final dateTime = DateTime.parse(node.text).toLocal();
-            return _buildTextSpanForCurrentNode(
-              text: dateTimeFormat.format(dateTime),
-            );
-          } else {
-            return _buildTextSpanForCurrentNode(
-              text: node.text,
-            );
-          }
-          // for linter (The last statement of the 'case' should be 'break',
-          // 'continue', 'rethrow', 'return', or 'throw'.)
-          break;
+        case TextType.time:
+          return _buildTextSpanForCurrentNode();
 
         case TextType.bold:
           return _buildTextSpanForCurrentNode(
@@ -183,9 +171,6 @@ class MarkupText extends StatelessWidget {
             decoration: TextDecoration.combine(newDecorations),
             newDecorations: newDecorations,
           );
-
-        case TextType.time:
-          return _buildTextSpanForCurrentNode();
 
         case TextType.link:
           return _buildTextSpanForCurrentNode(

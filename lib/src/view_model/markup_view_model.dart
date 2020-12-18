@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:characters/characters.dart';
@@ -12,21 +13,33 @@ import 'package:tdmarkup/tdmarkup.dart';
 /// Can only have children property.
 class MarkupViewModel {
   final List<MarkupNode> children;
+  final DateFormat dateTimeFormat;
 
-  MarkupViewModel({
+  const MarkupViewModel({
+    @required this.dateTimeFormat,
     @required this.children,
   });
 
-  factory MarkupViewModel.fromMarkupEntities(List<MarkupEntity> markup, String initialText) {
+  factory MarkupViewModel.fromMarkupEntities({
+    @required DateFormat dateTimeFormat,
+    @required List<MarkupEntity> markup,
+    @required String initialText,
+  }) {
     return MarkupViewModel(
-      children: _mapMarkupChildrenToNodeList(markup, initialText),
+      dateTimeFormat: dateTimeFormat,
+      children: _mapMarkupChildrenToNodeList(
+        dateTimeFormat: dateTimeFormat,
+        children: markup,
+        inheritedText: initialText,
+      ),
     );
   }
 
-  static List<MarkupNode> _mapMarkupChildrenToNodeList(
-    List<MarkupEntity> children,
-    String inheritedText,
-  ) {
+  static List<MarkupNode> _mapMarkupChildrenToNodeList({
+    @required DateFormat dateTimeFormat,
+    @required List<MarkupEntity> children,
+    @required String inheritedText,
+  }) {
     // [inheritedTextCharList] is required to handle emojis properly.
     // See: https://medium.com/dartlang/dart-string-manipulation-done-right-5abd0668ba3e
     final inheritedTextCharList = inheritedText.characters.split(''.characters).toList();
@@ -54,7 +67,8 @@ class MarkupViewModel {
           ? entity.repl
           : inheritedTextCharList
               .sublist(
-                // This null check is required due to [entity.openingMarkerLength] can be null for some markup types.
+                // This null check is required due to [entity.openingMarkerLength]
+                // can be null for some markup types.
                 entity.open + (entity.openLength ?? 0),
                 entity.close,
               )
@@ -66,14 +80,26 @@ class MarkupViewModel {
             type: entityTextType,
             url: entity.url,
             children: _mapMarkupChildrenToNodeList(
-              entity.childs,
-              innerText,
+              children: entity.childs,
+              inheritedText: innerText,
+              dateTimeFormat: dateTimeFormat,
             ),
           ),
         );
       } else if (entityTextType == TextType.plain) {
         mappedChildren.add(
           TextNode(text: innerText),
+        );
+      } else if (entityTextType == TextType.time) {
+        mappedChildren.add(
+          StyleNode(
+            type: entityTextType,
+            children: [
+              TextNode(
+                text: dateTimeFormat.format(entity.time.toLocal()),
+              ),
+            ],
+          ),
         );
       } else {
         mappedChildren.add(

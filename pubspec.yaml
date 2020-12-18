@@ -13,7 +13,8 @@ dependencies:
   tdproto_dart:
     git:
       url: https://github.com/tada-team/tdproto_dart.git
-      ref: cffbd0bd  # dev branch
+      ref: ba9f5f85  # dev branch
+
   intl: ^0.16.1
   dart_extensions: ^1.0.2
   equatable: ^1.2.5
