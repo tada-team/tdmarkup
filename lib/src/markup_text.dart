@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:intl/intl.dart';
 import 'package:dart_extensions/dart_extensions.dart';
 
 import 'package:tdmarkup/tdmarkup.dart';
@@ -17,7 +16,6 @@ class MarkupText extends StatelessWidget {
   final TextStyle _rootStyle;
   final MarkupViewModel viewModel;
   final LaunchLink launchLink;
-  final DateFormat dateTimeFormat;
   final Color linkColor;
   final Color codeBorderColor;
   final Color codeBackgroundColor;
@@ -32,7 +30,6 @@ class MarkupText extends StatelessWidget {
     @required style,
     @required this.viewModel,
     @required this.launchLink,
-    @required this.dateTimeFormat,
     @required this.linkColor,
     @required this.codeBorderColor,
     @required this.codeBackgroundColor,
