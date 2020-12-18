@@ -63,7 +63,7 @@ class MarkupViewModel {
       if (!entity.childs.isEmptyOrNull) {
         mappedChildren.add(
           StyleNode(
-            type: entity.type,
+            type: entityTextType,
             url: entity.url,
             children: _mapMarkupChildrenToNodeList(
               entity.childs,
@@ -78,7 +78,7 @@ class MarkupViewModel {
       } else {
         mappedChildren.add(
           StyleNode(
-            type: entity.type,
+            type: entityTextType,
             url: entity.url,
             children: [
               TextNode(text: innerText),

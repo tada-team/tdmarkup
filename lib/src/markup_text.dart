@@ -5,7 +5,7 @@ import 'package:dart_extensions/dart_extensions.dart';
 
 import 'package:tdmarkup/tdmarkup.dart';
 
-typedef LaunchLink = Future<void> Function(String url);
+typedef LaunchLink = void Function(String url);
 
 /// Builds one resulting widget that represents markup.
 ///
@@ -192,7 +192,7 @@ class MarkupText extends StatelessWidget {
             color: linkColor,
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                return launchLink(node.url);
+                launchLink(node.url);
               },
           );
 
