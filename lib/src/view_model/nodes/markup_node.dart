@@ -5,13 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:tdmarkup_dart/src/view_model/nodes/i_markup_node.dart';
 import 'package:tdmarkup_dart/src/view_model/text_type.dart';
 
-/// Represents single markup unit.
+/// Represents a single markup unit.
 ///
-/// Text property can only be present when type is [MarkupType.plain].
+/// Text property can only be present when type is [TextType.plain].
 ///
-/// The origin of markup tree must be [RootNode].
-///
-/// Example for text "_1 *2 ~34~ 6* 7_"
+/// Example for text "_1 *2 ~34~ 6* 7_":
 /// ```dart
 /// RootNode(
 ///   children: [
