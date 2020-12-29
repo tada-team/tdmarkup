@@ -73,7 +73,4 @@ build/
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 
-# Flutter version management
-.fvm
-
 pubspec.lock

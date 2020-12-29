@@ -45,7 +45,7 @@ class MarkupViewModel {
     final inheritedTextCharList = inheritedText.characters.split(''.characters).toList();
     final mappedChildren = <MarkupNode>[];
 
-    int lastIndex = 0;
+    var lastIndex = 0;
     for (final entity in children) {
       final entityTextType = mapMarkupTypeToTextType(entity.type);
 

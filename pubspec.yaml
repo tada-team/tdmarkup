@@ -1,7 +1,6 @@
 name: tdmarkup_dart
 description: Tada flutter markup.
 version: 0.0.1
-author: eboshare
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -10,16 +9,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  tdproto_dart:
-    git:
-      url: https://github.com/tada-team/tdproto_dart.git
-      ref: ba9f5f85  # dev branch
 
   intl: ^0.16.1
   dart_extensions: ^1.0.2
   equatable: ^1.2.5
   characters: ^1.0.0
 
+  tdproto_dart: ^1.0.1-dev
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  pedantic: ^1.9.2
