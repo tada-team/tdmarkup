@@ -18,6 +18,7 @@ dependencies:
   dart_extensions: ^1.0.2
   equatable: ^1.2.5
   characters: ^1.0.0
+  meta: ^1.2.4
 
   tdproto_dart: ^1.0.1-dev
 
