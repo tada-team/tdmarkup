@@ -1,9 +1,6 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:dart_extensions/dart_extensions.dart';
-
 import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
 // TODO: Упростить передачу rootTextStyle.
@@ -87,7 +84,7 @@ class _BuildTextSpanConstructor {
       style: textStyleToCopy.copyWith(
         fontWeight: fontWeight,
         fontStyle: fontStyle,
-        decoration: decoration,
+        decoration: TextDecoration.combine(newDecorations),
         color: color,
         fontFamily: fontFamily,
         fontFamilyFallback: fontFamilyFallback,
@@ -175,135 +172,5 @@ class MarkupText extends StatelessWidget {
 
       return builder(params, constructor.buildTextSpan);
     }).toList();
-  }
-}
-
-InlineSpan inlineSpanBuilder(Parameters params, BuildTextSpan buildTextSpan) {
-  // TODO: Remove this mock.
-  const _rootStyle = TextStyle(
-    fontSize: 18,
-    fontFamily: 'Roboto',
-  );
-
-  final node = params.node;
-  switch (node.type) {
-    // unsafe treated as regular text,  no need to escape html in flutter
-    case TextType.unsafe:
-    case TextType.plain:
-      return buildTextSpan(
-        text: node.text,
-      );
-
-    case TextType.time:
-      // Вставка детей происходит автоматически.
-      // TODO: Сделать чтобы вставка детей была понятнее.
-      return buildTextSpan();
-
-    case TextType.bold:
-      return buildTextSpan(
-        fontWeight: FontWeight.bold,
-      );
-
-    case TextType.italic:
-      return buildTextSpan(
-        fontStyle: FontStyle.italic,
-      );
-
-    case TextType.strike:
-      return buildTextSpan(
-        decoration: TextDecoration.lineThrough,
-      );
-
-    case TextType.underscore:
-      return buildTextSpan(
-        decoration: TextDecoration.underline,
-      );
-
-    case TextType.link:
-      return buildTextSpan(
-        // TODO: Remove this hardcoded value.
-        color: Colors.blue,
-        recognizer: TapGestureRecognizer()
-          ..onTap = () {
-            // TODO: Remove this mock.
-            print(node.url);
-          },
-      );
-
-    case TextType.code:
-      return WidgetSpan(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 5,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              width: 1,
-              // TODO: Remove this mock.
-              color: Colors.brown,
-            ),
-          ),
-          child: Text.rich(
-            buildTextSpan(
-              sourceTextStyle: _rootStyle,
-              color: Colors.brown, // TODO: Remove this mock.
-              fontFamily: 'RobotoMono', // TODO: Remove this mock.
-            ),
-          ),
-        ),
-      );
-
-    case TextType.quote:
-      return WidgetSpan(
-        child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            border: Border(
-              left: BorderSide(
-                width: 2,
-                // TODO: Remove this mock.
-                color: Colors.yellow,
-              ),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(4),
-            child: Text.rich(
-              buildTextSpan(
-                sourceTextStyle: _rootStyle,
-              ),
-            ),
-          ),
-        ),
-      );
-
-    case TextType.codeBlock:
-      return WidgetSpan(
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.pink, // TODO: Remove this mock.
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              width: 1,
-              color: Colors.green, // TODO: Remove this mock.
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(4),
-            child: Text.rich(
-              buildTextSpan(
-                sourceTextStyle: _rootStyle,
-                color: Colors.orange, // TODO: Remove this mock.
-                fontFamily: 'RobotoMono', // TODO: Remove this mock.
-              ),
-            ),
-          ),
-        ),
-      );
-
-    default:
-      throw Exception('Unsupported markup type');
   }
 }
