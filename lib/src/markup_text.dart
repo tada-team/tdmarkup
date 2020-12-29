@@ -18,7 +18,8 @@ typedef BuildTextSpan = InlineSpan Function({
   double height,
 });
 
-/// Requires the api user to provide their own logic to build [InlineSpan]s.
+/// Requires you to provide own logic to build [InlineSpan]s.
+/// You must provide an [InlineSpan] for each value in [TextType.values], see the example in this project.
 typedef InlineSpanBuilder = InlineSpan Function(InlineSpanBuilderParams params, BuildTextSpan buildTextSpan);
 
 /// Helps to pass properties to [InlineSpanBuilder].
@@ -61,7 +62,8 @@ class MarkupText extends StatelessWidget {
   /// View model.
   final MarkupViewModel viewModel;
 
-  /// Requires a user to provide their own logic for building [InlineSpan]s.
+  /// Requires you to provide own logic to build [InlineSpan]s.
+  /// You must provide an [InlineSpan] for each value in [TextType.values], see the example in this project.
   final InlineSpanBuilder builder;
 
   const MarkupText({
