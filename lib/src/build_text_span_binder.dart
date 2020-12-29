@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
+/// Recursively builds all nested children of a node.
 typedef _BuildMarkupChildren = List<InlineSpan> Function({
   BuildContext context,
   List<MarkupNode> children,
@@ -11,6 +12,9 @@ typedef _BuildMarkupChildren = List<InlineSpan> Function({
   GestureRecognizer inheritedRecognizer,
 });
 
+/// Allows to bind properties to [BuildTextSpan] function via
+/// instantiating this class and getting [BuildTextSpanBinder.buildTextSpan].
+/// In other words [BuildTextSpanBinder.buildTextSpan] uses this class as a namespace instead of using a closure.
 class BuildTextSpanBinder {
   final BuildContext context;
   final List<TextDecoration> inheritedDecorations;
@@ -26,6 +30,7 @@ class BuildTextSpanBinder {
     this.inheritedRecognizer,
   });
 
+  /// Builds [TextSpan] with inherited fields which flutter doesn't inherit by default.
   TextSpan buildTextSpan({
     GestureRecognizer recognizer,
     TextDecoration decoration,

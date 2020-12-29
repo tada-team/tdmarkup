@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:tdmarkup_dart/src/build_text_span_binder.dart';
 import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
-/// Allows to build [TextSpan] with inherited fields which flutter doesn't inherit by default.
+/// Builds [TextSpan] with inherited fields which flutter doesn't inherit by default.
 typedef BuildTextSpan = InlineSpan Function({
   GestureRecognizer recognizer,
   TextDecoration decoration,
