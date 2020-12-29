@@ -1,0 +1,12 @@
+name: example
+description: tdmarkup_dart example
+publish_to: 'none'
+
+version: 1.0.0
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter

@@ -13,7 +13,7 @@ import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
 typedef LaunchLink = void Function(String url);
 
-typedef InlineSpanBuilder = void Function(Parameters params, BuildTextSpan buildTextSpan);
+typedef InlineSpanBuilder = InlineSpan Function(Parameters params, BuildTextSpan buildTextSpan);
 
 typedef BuildTextSpan = InlineSpan Function({
   GestureRecognizer recognizer,
@@ -26,6 +26,14 @@ typedef BuildTextSpan = InlineSpan Function({
   String fontFamily,
   List<String> fontFamilyFallback,
   double height,
+});
+
+typedef _BuildMarkupChildren = List<InlineSpan> Function({
+  BuildContext context,
+  List<MarkupNode> children,
+  MarkupNode parent,
+  List<TextDecoration> inheritedDecorations,
+  GestureRecognizer inheritedRecognizer,
 });
 
 class Parameters {
@@ -44,14 +52,14 @@ class Parameters {
   });
 }
 
-class BuildTextSpanConstructor {
+class _BuildTextSpanConstructor {
   final BuildContext context;
   final List<TextDecoration> inheritedDecorations;
   final MarkupNode node;
   final GestureRecognizer inheritedRecognizer;
-  final Function buildMarkupChildren; // TODO: Add typedef.
+  final _BuildMarkupChildren buildMarkupChildren;
 
-  const BuildTextSpanConstructor({
+  const _BuildTextSpanConstructor({
     @required this.context,
     @required this.inheritedDecorations,
     @required this.node,
@@ -157,7 +165,7 @@ class MarkupText extends StatelessWidget {
         inheritedDecorations: inheritedDecorations,
         inheritedRecognizer: inheritedRecognizer,
       );
-      final constructor = BuildTextSpanConstructor(
+      final constructor = _BuildTextSpanConstructor(
         node: node,
         context: context,
         buildMarkupChildren: _buildMarkupChildren,
