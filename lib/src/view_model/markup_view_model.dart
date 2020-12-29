@@ -12,7 +12,10 @@ import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 ///
 /// Can only have children property.
 class MarkupViewModel {
+  /// Top-level [MarkupNode]s.
   final List<MarkupNode> children;
+
+  /// Format to convert [DateTime] to [String] for [TextType.time].
   final DateFormat dateTimeFormat;
 
   const MarkupViewModel({
@@ -40,7 +43,7 @@ class MarkupViewModel {
     @required List<MarkupEntity> children,
     @required String inheritedText,
   }) {
-    // [inheritedTextCharList] is required to handle emojis properly.
+    // [inheritedText.characters] is required to handle emojis properly.
     // See: https://medium.com/dartlang/dart-string-manipulation-done-right-5abd0668ba3e
     final inheritedTextCharList = inheritedText.characters.split(''.characters).toList();
     final mappedChildren = <MarkupNode>[];
@@ -67,7 +70,7 @@ class MarkupViewModel {
           ? entity.repl
           : inheritedTextCharList
               .sublist(
-                // This null check is required due to [entity.openingMarkerLength]
+                // This null check is required due to [entity.openLength]
                 // can be null for some markup types.
                 entity.open + (entity.openLength ?? 0),
                 entity.close,
@@ -113,7 +116,7 @@ class MarkupViewModel {
         );
       }
 
-      // This null check is required due to [entity.closingMarkerLength] can be null for some markup types.
+      // This null check is required due to [entity.closeLength] can be null for some markup types.
       lastIndex = entity.close + (entity.closeLength ?? 0);
     }
 
