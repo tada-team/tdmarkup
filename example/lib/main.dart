@@ -183,7 +183,7 @@ class _AppState extends State<App> {
         );
 
       default:
-        throw Exception('Unsupported markup type: ${node.type}');
+        throw UnimplementedError('Unsupported markup type: ${node.type}');
     }
   }
 }
