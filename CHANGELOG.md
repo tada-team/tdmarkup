@@ -1,3 +1,6 @@
-## [0.0.1] - TODO: Add release date.
+## 1.0.0-dev
 
-* TODO: Describe initial release.
+- Initial version or this project.
+- Widget - `MarkupText`.
+- Nodes - `StyleNode`, `TextNode`.
+- View model - `MarkupViewModel`.
