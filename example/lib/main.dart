@@ -65,7 +65,10 @@ class _AppState extends State<App> {
     }
   }
 
-  InlineSpan _inlineSpanBuilder(Parameters params, BuildTextSpan buildTextSpan) {
+  InlineSpan _inlineSpanBuilder(
+    InlineSpanBuilderParams params,
+    BuildTextSpan buildTextSpan,
+  ) {
     final node = params.node;
     switch (node.type) {
       // unsafe type treated as regular text,  no need to escape html in flutter.
