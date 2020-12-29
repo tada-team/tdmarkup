@@ -1,6 +1,6 @@
 name: tdmarkup_dart
 description: Tada flutter markup.
-version: 0.0.1
+version: 1.0.0-dev
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
