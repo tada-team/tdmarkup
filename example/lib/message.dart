@@ -13,6 +13,7 @@ List<MarkupEntity> _serializeMarkup(List<dynamic> markup) {
   return markup.map((json) => MarkupEntity.fromJson(json)).toList();
 }
 
+/// Helps to load markup entities and text from json.
 class Message {
   final String text;
   final List<MarkupEntity> markup;

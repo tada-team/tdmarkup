@@ -19,6 +19,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+    // Loads markup and text from json.
     _loadAssetFuture = Message.loadFromJsonAsset(Constants.assetJsonMessagePath);
   }
 
@@ -57,14 +58,7 @@ class _AppState extends State<App> {
     );
   }
 
-  Future<bool> _launchLink(String url) async {
-    if (await canLaunch(url)) {
-      return await launch(url);
-    } else {
-      return false;
-    }
-  }
-
+  /// All you need to know goes here.
   InlineSpan _inlineSpanBuilder(
     InlineSpanBuilderParams params,
     BuildTextSpan buildTextSpan,
@@ -184,6 +178,14 @@ class _AppState extends State<App> {
 
       default:
         throw UnimplementedError('Unsupported markup type: ${node.type}');
+    }
+  }
+
+  Future<bool> _launchLink(String url) async {
+    if (await canLaunch(url)) {
+      return await launch(url);
+    } else {
+      return false;
     }
   }
 }
