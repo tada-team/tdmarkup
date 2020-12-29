@@ -14,3 +14,8 @@ dependencies:
   tdmarkup_dart:
     path: ../
   intl: ^0.16.1
+  url_launcher: ^5.7.10
+
+flutter:
+  assets:
+    - assets/example_message.json
