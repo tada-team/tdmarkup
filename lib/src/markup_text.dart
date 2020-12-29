@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:tdmarkup_dart/src/build_text_span_binder.dart';
 import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
-/// Builds [TextSpan] with inherited fields which flutter doesn't inherit by default.
+/// Builds a [TextSpan] with inherited fields which flutter doesn't inherit by default.
 typedef BuildTextSpan = InlineSpan Function({
   GestureRecognizer recognizer,
   TextDecoration decoration,
@@ -18,7 +18,7 @@ typedef BuildTextSpan = InlineSpan Function({
   double height,
 });
 
-/// Allows user to provide their own logic for building [InlineSpan]s.
+/// Requires the api user to provide their own logic to build [InlineSpan]s.
 typedef InlineSpanBuilder = InlineSpan Function(InlineSpanBuilderParams params, BuildTextSpan buildTextSpan);
 
 /// Helps to pass properties to [InlineSpanBuilder].
@@ -29,7 +29,7 @@ class InlineSpanBuilderParams {
   /// Current node for which [InlineSpanBuilder] builds an [InlineSpan].
   final MarkupNode node;
 
-  /// Parent node that has [MarkupNode.children] array that we are currently in.
+  /// Parent node that has a [MarkupNode.children] array that we are currently in.
   final MarkupNode parent;
 
   /// Inherited decorations passed and combined directly inside [BuildTextSpan],
@@ -50,18 +50,18 @@ class InlineSpanBuilderParams {
 
 /// Builds one resulting widget that represents markup.
 ///
-/// Uses under hood: [RichText] for hosting [InlineSpan]s inside widget layer;
-/// [TextSpan] to nest child [TextSpan]s and build an inline markup content such as [TextType.link],
-/// [TextType.italic], [TextType.bold];
-/// [WidgetSpan] to build a block markup content such as [TextType.quote] and [TextType.codeblock].
+/// Uses under hood: [RichText] to host [InlineSpan]s inside widget layer;
+/// [TextSpan] to nest child [TextSpan]s and build an inline markup content
+/// such as [TextType.link], [TextType.bold];
+/// [WidgetSpan] to build a block markup content such as [TextType.quote] and [TextType.codeBlock].
 class MarkupText extends StatelessWidget {
-  /// Style for root [TextSpan], this style will be inherited by children.
+  /// Style for the root [TextSpan], this style will be inherited by children.
   final TextStyle rootStyle;
 
   /// View model.
   final MarkupViewModel viewModel;
 
-  /// Allows user to provide their own logic for building [InlineSpan]s.
+  /// Requires a user to provide their own logic for building [InlineSpan]s.
   final InlineSpanBuilder builder;
 
   const MarkupText({

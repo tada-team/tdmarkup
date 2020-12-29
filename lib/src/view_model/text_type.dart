@@ -1,7 +1,7 @@
 import 'package:tdproto_dart/tdproto_dart.dart';
 
 enum TextType {
-  /// Text with no style, must only have text.
+  /// Text with no style, can only contain text.
   plain,
 
   /// Bold style.

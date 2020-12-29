@@ -7,7 +7,7 @@ abstract class IMarkupNode {
   /// Own text content.
   String get text;
 
-  /// Direct url for [TextType.link]
+  /// Direct url for [TextType.link].
   String get url;
 
   /// Nested [IMarkupNode]s.

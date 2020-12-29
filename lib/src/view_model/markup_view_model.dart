@@ -6,11 +6,7 @@ import 'package:tdproto_dart/tdproto_dart.dart';
 
 import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
-/// Represents the host node for a whole markup tree.
-///
-/// Must be the first node in a markup tree.
-///
-/// Can only have children property.
+/// Hosts a whole markup tree.
 class MarkupViewModel {
   /// Top-level [MarkupNode]s.
   final List<MarkupNode> children;

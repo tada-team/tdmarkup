@@ -9,7 +9,7 @@ import 'package:tdmarkup_dart/src/view_model/text_type.dart';
 ///
 /// Text property can only be present when type is [TextType.plain].
 ///
-/// Example for text "_1 *2 ~34~ 6* 7_":
+/// Code example for text "_1 *2 ~34~ 6* 7_":
 /// ```dart
 /// RootNode(
 ///   children: [

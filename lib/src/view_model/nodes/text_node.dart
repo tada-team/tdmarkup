@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
-/// Represents outermost node type which only can have text.
+/// Represents outermost node type which can only contain text.
 class TextNode extends MarkupNode {
   TextNode({
     @required text,

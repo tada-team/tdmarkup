@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
-/// Represents an applied style on a group of nodes.
+/// Represents a style applied to a group of nodes.
 ///
 /// Must have type and not empty children.
 class StyleNode extends MarkupNode {
