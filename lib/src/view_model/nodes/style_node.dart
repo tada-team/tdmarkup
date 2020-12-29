@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-import 'package:tdmarkup/tdmarkup.dart';
+import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
 /// Represents an applied style on a group of nodes.
 ///

@@ -1,4 +1,4 @@
-import 'package:tdmarkup/tdmarkup.dart';
+import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
 abstract class IMarkupNode {
   TextType get type;

@@ -4,7 +4,7 @@ import 'package:dart_extensions/dart_extensions.dart';
 import 'package:characters/characters.dart';
 import 'package:tdproto_dart/tdproto_dart.dart';
 
-import 'package:tdmarkup/tdmarkup.dart';
+import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
 /// Represents the host node for a whole markup tree.
 ///

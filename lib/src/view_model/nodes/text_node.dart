@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-import 'package:tdmarkup/tdmarkup.dart';
+import 'package:tdmarkup_dart/tdmarkup_dart.dart';
 
 /// Represents outermost node which only can have text.
 class TextNode extends MarkupNode {

@@ -2,8 +2,8 @@ import 'package:meta/meta.dart';
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:tdmarkup/src/view_model/i_markup_node.dart';
-import 'package:tdmarkup/src/view_model/text_type.dart';
+import 'package:tdmarkup_dart/src/view_model/nodes/i_markup_node.dart';
+import 'package:tdmarkup_dart/src/view_model/text_type.dart';
 
 /// Represents single markup unit.
 ///

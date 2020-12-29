@@ -1,60 +1,99 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:dart_extensions/dart_extensions.dart';
 
-import 'package:tdmarkup/tdmarkup.dart';
+import 'package:tdmarkup_dart/tdmarkup_dart.dart';
+
+// TODO: Упростить передачу rootTextStyle.
+// TODO: Упростить ситуацию с [inheritedDecorations] и [inheritedRecognizer].
+// TODO: Возможно нужно использовать не просто InlineSpan,
+//  т.к. человек может не понять что работает наследование некоторых полей.
 
 typedef LaunchLink = void Function(String url);
 
-/// Builds one resulting widget that represents markup.
-///
-/// Uses under hood: [RichText] for hosting [InlineSpan]s inside widget layer;
-/// [TextSpan] to nest child [TextSpan]s and build an inline markup content such as link,
-/// italic, bold;
-/// [WidgetSpan] to build a block markup content such as quote and codeblock.
-class MarkupText extends StatelessWidget {
-  final TextStyle _rootStyle;
-  final MarkupViewModel viewModel;
-  final LaunchLink launchLink;
-  final Color linkColor;
-  final Color codeBorderColor;
-  final Color codeBackgroundColor;
-  final String monoFontFamily;
-  final Color quoteBorderColor;
-  final Color codeBlockBackgroundColor;
-  final Color codeBlockBorderColor;
-  final Color codeBlockTextColor;
+typedef InlineSpanBuilder = void Function(Parameters params, BuildTextSpan buildTextSpan);
 
-  const MarkupText({
-    Key key,
-    @required style,
-    @required this.viewModel,
-    @required this.launchLink,
-    @required this.linkColor,
-    @required this.codeBorderColor,
-    @required this.codeBackgroundColor,
-    @required this.monoFontFamily,
-    @required this.quoteBorderColor,
-    @required this.codeBlockBackgroundColor,
-    @required this.codeBlockBorderColor,
-    @required this.codeBlockTextColor,
-  })  : _rootStyle = style,
-        super(key: key);
+typedef BuildTextSpan = InlineSpan Function({
+  GestureRecognizer recognizer,
+  TextDecoration decoration,
+  TextStyle sourceTextStyle,
+  String text,
+  FontWeight fontWeight,
+  FontStyle fontStyle,
+  Color color,
+  String fontFamily,
+  List<String> fontFamilyFallback,
+  double height,
+});
 
-  @override
-  Widget build(BuildContext context) => _buildMarkup(context, viewModel);
+class Parameters {
+  final BuildContext context;
+  final MarkupNode node;
+  final MarkupNode parent;
+  final List<TextDecoration> inheritedDecorations;
+  final GestureRecognizer inheritedRecognizer;
 
-  Widget _buildMarkup(BuildContext context, MarkupViewModel viewModel) {
-    return Text.rich(
-      // root text span
-      TextSpan(
-        style: _rootStyle,
-        children: _buildMarkupChildren(
-          context: context,
-          parent: null, // TODO: Fix this.
-          children: viewModel.children,
-        ),
+  const Parameters({
+    @required this.context,
+    @required this.node,
+    @required this.parent,
+    @required this.inheritedDecorations,
+    @required this.inheritedRecognizer,
+  });
+}
+
+class BuildTextSpanConstructor {
+  final BuildContext context;
+  final List<TextDecoration> inheritedDecorations;
+  final MarkupNode node;
+  final GestureRecognizer inheritedRecognizer;
+  final Function buildMarkupChildren; // TODO: Add typedef.
+
+  const BuildTextSpanConstructor({
+    @required this.context,
+    @required this.inheritedDecorations,
+    @required this.node,
+    @required this.buildMarkupChildren,
+    this.inheritedRecognizer,
+  });
+
+  TextSpan buildTextSpan({
+    GestureRecognizer recognizer,
+    TextDecoration decoration,
+    TextStyle sourceTextStyle,
+    String text,
+    FontWeight fontWeight,
+    FontStyle fontStyle,
+    Color color,
+    String fontFamily,
+    List<String> fontFamilyFallback,
+    double height,
+  }) {
+    final textStyleToCopy = sourceTextStyle ?? const TextStyle();
+    final newDecorations = _constructNewDecorations(inheritedDecorations, decoration);
+    return TextSpan(
+      text: text,
+      recognizer: recognizer ?? inheritedRecognizer,
+      style: textStyleToCopy.copyWith(
+        fontWeight: fontWeight,
+        fontStyle: fontStyle,
+        decoration: decoration,
+        color: color,
+        fontFamily: fontFamily,
+        fontFamilyFallback: fontFamilyFallback,
+        height: height,
       ),
+      children: node.children.isEmptyOrNull
+          ? null
+          : buildMarkupChildren(
+              context: context,
+              parent: node,
+              children: node.children,
+              inheritedDecorations: newDecorations,
+              inheritedRecognizer: recognizer ?? inheritedRecognizer,
+            ),
     );
   }
 
@@ -68,192 +107,195 @@ class MarkupText extends StatelessWidget {
       return [...oldDecorations];
     }
   }
+}
+
+/// Builds one resulting widget that represents markup.
+///
+/// Uses under hood: [RichText] for hosting [InlineSpan]s inside widget layer;
+/// [TextSpan] to nest child [TextSpan]s and build an inline markup content such as link,
+/// italic, bold;
+/// [WidgetSpan] to build a block markup content such as quote and codeblock.
+class MarkupText extends StatelessWidget {
+  final TextStyle rootStyle;
+  final MarkupViewModel viewModel;
+  final InlineSpanBuilder builder;
+
+  const MarkupText({
+    Key key,
+    @required this.viewModel,
+    @required this.rootStyle,
+    @required this.builder,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      // Root text span.
+      TextSpan(
+        style: rootStyle,
+        children: _buildMarkupChildren(
+          context: context,
+          parent: null, // TODO: Fix this.
+          children: viewModel.children,
+        ),
+      ),
+    );
+  }
 
   List<InlineSpan> _buildMarkupChildren({
     @required BuildContext context,
     @required List<MarkupNode> children,
     MarkupNode parent,
     List<TextDecoration> inheritedDecorations = const [],
-    TapGestureRecognizer inheritedRecognizer,
+    GestureRecognizer inheritedRecognizer,
   }) {
-    // const monoFontFamily = 'RobotoMono';
-    // final theme = Theme.of(context);
-
     return children.map((node) {
-      /// Helps to create [TextSpan] with as few parameters as possible to keep the code simple.
-      ///
-      /// [recognizer] is not inherited by flutter, handles taps on link and its nested children.
-      /// [recognizer] is passed down to the most deep children due to it only handles taps
-      /// if there is an owh text on [TextSpan] set through [TextSpans]'s text parameter.
-      ///
-      /// [decoration] and [newDecoration] is for combining [TextDecoration.lineThrough] and
-      /// [TextDecoration.underline] due to they are not properly inherited by flutter.
-      ///
-      /// [sourceTextStyle] is for [WidgetSpan]s which doesn't inherit [TextStyle] properly through flutter.
-      TextSpan _buildTextSpanForCurrentNode({
-        TapGestureRecognizer recognizer,
-        TextDecoration decoration,
-        List<TextDecoration> newDecorations,
-        TextStyle sourceTextStyle,
-        String text,
-        FontWeight fontWeight,
-        FontStyle fontStyle,
-        Color color,
-        String fontFamily,
-        List<String> fontFamilyFallback,
-        double height,
-      }) {
-        final textStyleToCopy = sourceTextStyle ?? const TextStyle();
-        return TextSpan(
-          text: text,
-          recognizer: recognizer ?? inheritedRecognizer,
-          style: textStyleToCopy.copyWith(
-            fontWeight: fontWeight,
-            fontStyle: fontStyle,
-            decoration: decoration,
-            color: color,
-            fontFamily: fontFamily,
-            fontFamilyFallback: fontFamilyFallback,
-            height: height,
-          ),
-          children: node.children.isEmptyOrNull
-              ? null
-              : _buildMarkupChildren(
-                  context: context,
-                  parent: node,
-                  children: node.children,
-                  inheritedDecorations: newDecorations ?? inheritedDecorations,
-                  inheritedRecognizer: recognizer ?? inheritedRecognizer,
-                ),
-        );
-      }
+      final params = Parameters(
+        node: node,
+        context: context,
+        parent: parent,
+        inheritedDecorations: inheritedDecorations,
+        inheritedRecognizer: inheritedRecognizer,
+      );
+      final constructor = BuildTextSpanConstructor(
+        node: node,
+        context: context,
+        buildMarkupChildren: _buildMarkupChildren,
+        inheritedDecorations: inheritedDecorations,
+        inheritedRecognizer: inheritedRecognizer,
+      );
 
-      switch (node.type) {
-        // unsafe treated as regular text,  no need to escape html in flutter
-        case TextType.unsafe:
-        case TextType.plain:
-          return _buildTextSpanForCurrentNode(
-            text: node.text,
-          );
-
-        case TextType.time:
-          return _buildTextSpanForCurrentNode();
-
-        case TextType.bold:
-          return _buildTextSpanForCurrentNode(
-            fontWeight: FontWeight.bold,
-          );
-
-        case TextType.italic:
-          return _buildTextSpanForCurrentNode(
-            fontStyle: FontStyle.italic,
-          );
-
-        case TextType.strike:
-          final newDecorations = _constructNewDecorations(
-            inheritedDecorations,
-            TextDecoration.lineThrough,
-          );
-          return _buildTextSpanForCurrentNode(
-            decoration: TextDecoration.combine(newDecorations),
-            newDecorations: newDecorations,
-          );
-
-        case TextType.underscore:
-          final newDecorations = _constructNewDecorations(
-            inheritedDecorations,
-            TextDecoration.underline,
-          );
-          return _buildTextSpanForCurrentNode(
-            decoration: TextDecoration.combine(newDecorations),
-            newDecorations: newDecorations,
-          );
-
-        case TextType.link:
-          return _buildTextSpanForCurrentNode(
-            color: linkColor,
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                launchLink(node.url);
-              },
-          );
-
-        case TextType.code:
-          return WidgetSpan(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 5,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  width: 1,
-                  color: codeBorderColor,
-                ),
-              ),
-              child: Text.rich(
-                _buildTextSpanForCurrentNode(
-                  sourceTextStyle: _rootStyle,
-                  color: codeBackgroundColor,
-                  fontFamily: monoFontFamily,
-                ),
-              ),
-            ),
-          );
-
-        case TextType.quote:
-          return WidgetSpan(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border(
-                  left: BorderSide(
-                    width: 2,
-                    color: quoteBorderColor,
-                  ),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Text.rich(
-                  _buildTextSpanForCurrentNode(
-                    sourceTextStyle: _rootStyle,
-                    decoration: TextDecoration.combine(inheritedDecorations),
-                  ),
-                ),
-              ),
-            ),
-          );
-
-        case TextType.codeBlock:
-          return WidgetSpan(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: codeBlockBackgroundColor,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  width: 1,
-                  color: codeBlockBorderColor,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Text.rich(
-                  _buildTextSpanForCurrentNode(
-                    sourceTextStyle: _rootStyle,
-                    color: codeBlockTextColor,
-                    fontFamily: monoFontFamily,
-                    decoration: TextDecoration.combine(inheritedDecorations),
-                  ),
-                ),
-              ),
-            ),
-          );
-
-        default:
-          throw Exception('Unsupported markup type');
-      }
+      return builder(params, constructor.buildTextSpan);
     }).toList();
+  }
+}
+
+InlineSpan inlineSpanBuilder(Parameters params, BuildTextSpan buildTextSpan) {
+  // TODO: Remove this mock.
+  const _rootStyle = TextStyle(
+    fontSize: 18,
+    fontFamily: 'Roboto',
+  );
+
+  final node = params.node;
+  switch (node.type) {
+    // unsafe treated as regular text,  no need to escape html in flutter
+    case TextType.unsafe:
+    case TextType.plain:
+      return buildTextSpan(
+        text: node.text,
+      );
+
+    case TextType.time:
+      // Вставка детей происходит автоматически.
+      // TODO: Сделать чтобы вставка детей была понятнее.
+      return buildTextSpan();
+
+    case TextType.bold:
+      return buildTextSpan(
+        fontWeight: FontWeight.bold,
+      );
+
+    case TextType.italic:
+      return buildTextSpan(
+        fontStyle: FontStyle.italic,
+      );
+
+    case TextType.strike:
+      return buildTextSpan(
+        decoration: TextDecoration.lineThrough,
+      );
+
+    case TextType.underscore:
+      return buildTextSpan(
+        decoration: TextDecoration.underline,
+      );
+
+    case TextType.link:
+      return buildTextSpan(
+        // TODO: Remove this hardcoded value.
+        color: Colors.blue,
+        recognizer: TapGestureRecognizer()
+          ..onTap = () {
+            // TODO: Remove this mock.
+            print(node.url);
+          },
+      );
+
+    case TextType.code:
+      return WidgetSpan(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 5,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              width: 1,
+              // TODO: Remove this mock.
+              color: Colors.brown,
+            ),
+          ),
+          child: Text.rich(
+            buildTextSpan(
+              sourceTextStyle: _rootStyle,
+              color: Colors.brown, // TODO: Remove this mock.
+              fontFamily: 'RobotoMono', // TODO: Remove this mock.
+            ),
+          ),
+        ),
+      );
+
+    case TextType.quote:
+      return WidgetSpan(
+        child: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                width: 2,
+                // TODO: Remove this mock.
+                color: Colors.yellow,
+              ),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text.rich(
+              buildTextSpan(
+                sourceTextStyle: _rootStyle,
+              ),
+            ),
+          ),
+        ),
+      );
+
+    case TextType.codeBlock:
+      return WidgetSpan(
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.pink, // TODO: Remove this mock.
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              width: 1,
+              color: Colors.green, // TODO: Remove this mock.
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text.rich(
+              buildTextSpan(
+                sourceTextStyle: _rootStyle,
+                color: Colors.orange, // TODO: Remove this mock.
+                fontFamily: 'RobotoMono', // TODO: Remove this mock.
+              ),
+            ),
+          ),
+        ),
+      );
+
+    default:
+      throw Exception('Unsupported markup type');
   }
 }
