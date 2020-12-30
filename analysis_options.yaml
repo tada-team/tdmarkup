@@ -1,1 +1,10 @@
 include: package:pedantic/analysis_options.1.9.0.yaml
+
+analyzer:
+  errors:
+    lines_longer_than_80_chars: error
+
+linter:
+  rules:
+    # Required for pub.dev to get maximum pub points.
+    - lines_longer_than_80_chars

@@ -35,7 +35,8 @@ enum TextType {
   unsafe,
 }
 
-/// Maps markup type from tdproto_dart's implementation to tdmarkup_dart's implementation.
+/// Maps markup type from tdproto_dart's implementation
+/// to tdmarkup_dart's implementation.
 TextType mapMarkupTypeToTextType(MarkupType markupType) {
   switch (markupType) {
     case MarkupType.bold:

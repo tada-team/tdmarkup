@@ -116,7 +116,8 @@ class MarkupViewModel {
         );
       }
 
-      // This null check is required due to [entity.closeLength] can be null for some markup types.
+      // This null check is required due to [entity.closeLength]
+      // can be null for some markup types.
       lastIndex = entity.close + (entity.closeLength ?? 0);
     }
 
