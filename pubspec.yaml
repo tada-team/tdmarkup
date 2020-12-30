@@ -4,7 +4,7 @@ homepage: https://github.com/tada-team/tdmarkup_dart
 repository: https://github.com/tada-team/tdmarkup_dart
 issue_tracker: https://github.com/tada-team/tdmarkup_dart/issues
 
-version: 1.0.0-dev
+version: 1.0.0-dev+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
