@@ -41,7 +41,11 @@ class MarkupViewModel {
   }) {
     // [inheritedText.characters] is required to handle emojis properly.
     // See: https://medium.com/dartlang/dart-string-manipulation-done-right-5abd0668ba3e
-    final inheritedTextCharList = inheritedText.characters.split(''.characters).toList();
+    final inheritedTextCharList = inheritedText.characters
+        .split(
+          ''.characters,
+        )
+        .toList();
     final mappedChildren = <MarkupNode>[];
 
     var lastIndex = 0;

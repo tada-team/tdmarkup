@@ -44,7 +44,10 @@ class BuildTextSpanBinder {
     double height,
   }) {
     final textStyleToCopy = sourceTextStyle ?? const TextStyle();
-    final newDecorations = _constructNewDecorations(inheritedDecorations, decoration);
+    final newDecorations = _constructNewDecorations(
+      inheritedDecorations,
+      decoration,
+    );
     return TextSpan(
       text: text,
       recognizer: recognizer ?? inheritedRecognizer,
@@ -73,7 +76,8 @@ class BuildTextSpanBinder {
     List<TextDecoration> oldDecorations,
     TextDecoration currentDecoration,
   ) {
-    if (currentDecoration != null && !oldDecorations.contains(currentDecoration)) {
+    if (currentDecoration != null &&
+        !oldDecorations.contains(currentDecoration)) {
       return [...oldDecorations, currentDecoration];
     } else {
       return [...oldDecorations];

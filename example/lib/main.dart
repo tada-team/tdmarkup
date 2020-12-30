@@ -20,7 +20,9 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     // Loads markup and text from json.
-    _loadAssetFuture = Message.loadFromJsonAsset(Constants.assetJsonMessagePath);
+    _loadAssetFuture = Message.loadFromJsonAsset(
+      Constants.assetJsonMessagePath,
+    );
   }
 
   @override

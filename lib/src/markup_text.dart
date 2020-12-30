@@ -20,7 +20,10 @@ typedef BuildTextSpan = InlineSpan Function({
 
 /// Requires you to provide own logic to build [InlineSpan]s.
 /// You must provide an [InlineSpan] for each value in [TextType.values], see the example in this project.
-typedef InlineSpanBuilder = InlineSpan Function(InlineSpanBuilderParams params, BuildTextSpan buildTextSpan);
+typedef InlineSpanBuilder = InlineSpan Function(
+  InlineSpanBuilderParams params,
+  BuildTextSpan buildTextSpan,
+);
 
 /// Helps to pass properties to [InlineSpanBuilder].
 class InlineSpanBuilderParams {
